@@ -76,6 +76,21 @@ export const flattenTree = (items: MenuItemType[]) => {
   return flatten(items);
 };
 
+export const buildTree = (flattenedItems: FlattenedItem[]) => {
+  const root: MenuItemType = { id: 'root', children: [], name: 'root' };
+  const nodes: Record<string, MenuItemType> = { [root.id]: root };
+  const items = flattenedItems.map((item) => ({ ...item, children: [] }));
+
+  for (const item of items) {
+    const parentId = item.parentId ?? root.id;
+    const parent = nodes[parentId] ?? findItem(items, parentId);
+    parent.children.push(item);
+    nodes[item.id] = item;
+  }
+
+  return root.children;
+};
+
 const getParentId = (
   items: FlattenedItem[],
   depth: number,
