@@ -57,6 +57,25 @@ const calculateProjectedDepth = (
   };
 };
 
+const getParentId = (
+  items: FlattenedItem[],
+  depth: number,
+  previousItem: FlattenedItem | undefined,
+  overItemIndex: number
+) => {
+  if (!previousItem || depth === 0) return null;
+
+  if (depth === previousItem.depth) return previousItem.parentId;
+  if (depth > previousItem.depth) return previousItem.id;
+
+  return (
+    items
+      .slice(0, overItemIndex)
+      .reverse()
+      .find((item) => item.depth === depth)?.parentId ?? null
+  );
+};
+
 const flatten = (
   items: MenuItemType[],
   parentId: UniqueIdentifier | null = null,
@@ -89,25 +108,6 @@ export const buildTree = (flattenedItems: FlattenedItem[]) => {
   }
 
   return root.children;
-};
-
-const getParentId = (
-  items: FlattenedItem[],
-  depth: number,
-  previousItem: FlattenedItem | undefined,
-  overItemIndex: number
-) => {
-  if (!previousItem || depth === 0) return null;
-
-  if (depth === previousItem.depth) return previousItem.parentId;
-  if (depth > previousItem.depth) return previousItem.id;
-
-  return (
-    items
-      .slice(0, overItemIndex)
-      .reverse()
-      .find((item) => item.depth === depth)?.parentId ?? null
-  );
 };
 
 export const findItem = (items: MenuItemType[], itemId: UniqueIdentifier) => {
