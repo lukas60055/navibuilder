@@ -57,6 +57,25 @@ const calculateProjectedDepth = (
   };
 };
 
+const flatten = (
+  items: MenuItemType[],
+  parentId: UniqueIdentifier | null = null,
+  depth = 0
+): FlattenedItem[] => {
+  return items.reduce<FlattenedItem[]>(
+    (acc, item, index) => [
+      ...acc,
+      { ...item, parentId, depth, index },
+      ...flatten(item.children, item.id, depth + 1),
+    ],
+    []
+  );
+};
+
+export const flattenTree = (items: MenuItemType[]) => {
+  return flatten(items);
+};
+
 const getParentId = (
   items: FlattenedItem[],
   depth: number,
